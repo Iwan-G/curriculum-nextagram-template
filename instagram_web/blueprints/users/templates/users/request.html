@@ -1,0 +1,33 @@
+{% extends "_layout.html" %}
+
+{% block content %}
+
+{# idol requests that are pending approval #}
+
+{% for request in current_user.idol_requests %}
+  <li>
+    {{request.username}}
+    <form action="{{url_for('users.unfollow', idol_id = request.id)}}" method="POST">
+        <input type="hidden" anem ="csrf_token" value ="{{ csrf_token }}"/>
+        <input type="submit" value="Delete"/>
+    </form>
+  </li>
+
+{% endfor %}
+
+{# fan requests that are pending approval #}
+{% for request in current_user.fan_requests %}
+
+  <li>
+    {{request.username}}
+    <form action="{{url_for('users.approve', idol_id = request.id)}}" method="POST">
+        <input type="hidden" anem ="csrf_token" value ="{{ csrf_token }}"/>
+        <input type="submit" value="Approve"/>
+    </form>
+    <form action="{{url_for('users.delete_request', idol_id = request.id)}}" method="POST">
+        <input type="hidden" anem ="csrf_token" value ="{{ csrf_token }}"/>
+        <input type="submit" value="Delete"/>
+    </form>
+  </li>
+
+{% endblock %}

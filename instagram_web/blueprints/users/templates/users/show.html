@@ -1,0 +1,64 @@
+{%extends '_layout.html' %}
+
+{% block content %}
+
+  <div class="d-flex justify-content-center">
+    <div class="col-3 text-center">
+      
+      <img src="{{user.full_image_path}}" class="img-thumbnail rounded-circle" width="200"/>
+
+      <h4>@{{user.username}}</h4>
+      {% if current_user.is_private %}
+        <h6>Profile: Private</h6>
+      {% else %}
+        <h6>Profile: Public</h6>
+      {% endif %}
+
+      {% if current_user.id == user.id %}
+        <a class=" btn btn-primary" href="{{url_for('users.edit',id=current_user.id)}}">Edit Profile</a>
+        <br></br>
+        <a class=" btn btn-primary" href="{{url_for('images.new')}}">Upload Image</a>
+
+      {% else %}
+        {% if current_user.follow_status(user) %}
+          <form action="{{url_fro('user.unfollow', idol_id == user.id)}}">
+            <input type="hidden" name ="csfr_token" value="{{ csrf_token() }}"/>
+            <input type="submit" value="Unfollow" class=" btn btn-primary"/>
+          </form>
+        {% else %}
+        <form action="{{url_fro('user.follow', idol_id == user.id)}}">
+          <input type="hidden" name ="csfr_token" value="{{ csrf_token() }}"/>
+          <input type="submit" value="Follow" class=" btn btn-primary"/>
+        </form>
+      {% endif %}
+    {% endif %}
+    
+    <ul>
+      <h5>{{user.username}}'s Idols</h5>
+      {% for idol in user.idols %}
+        <li>{{idol.username}}</li>
+      {% endfor %}
+    </ul>
+    <ul>
+      <h5>{{user.username}}'s fans</h5>
+      {% for fan in user.fans %}
+        <li>{{fan.username}}</li>
+      {% endfor %}
+    </ul>
+    
+
+
+    </div>
+    
+  </div>
+  <div class="container">
+    {% for image in user.images %}
+    <div>
+      <img src="{{image.full_image_path}}" width="350"/>
+      <p>Donations received: ${{ image.donations | sum(attribute="amount") }}</p>
+      <a class="btn btn-primary" href="{{url_for('donations.new', image_id=image.id)}}">Donate</a>
+    </div>
+    {% endfor %}
+  </div>
+ 
+{% endblock %}
